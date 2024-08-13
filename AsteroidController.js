@@ -25,6 +25,9 @@ export default class AsteroidController {
         this.canvas = canvas;
         this.asteroidBulletController = asteroidBulletController;
         this.playerBulletController = playerBulletController;
+        this.asteroidDeathSound = new Audio('sound/enemy-death.wav');
+        this.asteroidDeathSound.volume = 0.5;
+
         this.createAsteroids();
     }
 
@@ -41,11 +44,12 @@ export default class AsteroidController {
         this.asteroidRows.forEach(asteroidRow => {
             asteroidRow.forEach((asteroid, asteroidIndex) =>{
                 if(this.playerBulletController.collideWith(asteroid)) {
-                    //play a sound
+                    this.asteroidDeathSound.currentTime = 0;
+                    this.asteroidDeathSound.play();
                     asteroidRow.splice(asteroidIndex, 1);
                 }
-            })
-        }) 
+            });
+        });
 
         this.asteroidRows = this.asteroidRows.filter((asteroidRow) => asteroidRow.length > 0)
     }
@@ -134,5 +138,9 @@ export default class AsteroidController {
                 }
             });
         });
+    }
+
+    collideWith(sprite) {
+        return this.asteroidRows.flat().some(asteroid => asteroid.collideWith(sprite))
     }
 }
